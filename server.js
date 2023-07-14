@@ -14,18 +14,45 @@ app.get('/', (req, res) => {
 });
 
 app.post('/addtask', async (req, res) => {
-  const { todo } = req.body;
+  const { todo ,description} = req.body;
   try {
     const newData = new TaskSchema({
-      topic: todo.topic,
-      keywords:todo.keywords.split(',')
-      
+      todo: todo,
+      description:description
     });
     await newData.save();
-
-    return res.json(await TaskSchema.find({blog_status:false}));
-
-    // console.log(todo.topic);
+    // res.send(todo);
+    return res.json(await TaskSchema.find());
+  } catch (err) {
+    console.log(err);
+  }
+});
+app.post('/updatestatus', async (req, res) => {
+  const { id } = req.body;
+  try {
+    // const newData = new TaskSchema({
+    //   todo: todo
+    // });
+    // await newData.save();
+    // res.send(todo);
+    // console.log(id);
+    await TaskSchema.updateOne({ "_id": id }, { $set: { "status": true} });
+    return res.json(await TaskSchema.find({}));
+  } catch (err) {
+    console.log(err);
+  }
+});
+app.post('/updstatus', async (req, res) => {
+  const {prevTask,todo,description} = req.body;
+  try {
+    // const newData = new TaskSchema({
+    //   todo: todo
+    // });
+    // await newData.save();
+    // res.send(todo);
+    // console.log(id);
+    await TaskSchema.updateOne({ "todo": prevTask }, { $set: { "todo": todo,"description":description} });
+    return res.json(await TaskSchema.find({}));
   } catch (err) {
     console.log(err);
   }
@@ -34,59 +61,15 @@ app.post('/addtask', async (req, res) => {
 
 app.get('/gettask', async (req, res) => {
     try {
-      return res.json(await TaskSchema.find({blog_status:false}));
+      return res.json(await TaskSchema.find());
     } catch (err) {
       console.log(err);
     }
   }); 
-  app.post('/getinfoofblog',async (req, res) => {
-    const {topic_id} = req.body;
-    try {
-      // const appliedvolunteer=await ApplyforvolunteerSchema.find({email:email});
-      // await appliedvolunteer.updateOne({"email":email},{$set:{"accept":accept}});
-      let task = await TaskSchema.findOne({_id:topic_id });
-//       console.log(task);
-// await TaskSchema.updateOne({_id:topic_id }, { $set: { blog: blog,blog_status:true} });
-// task = await TaskSchema.find({_id: topic_id });
-      // await  appliedvolunteer.save();
-      return res.json(task);
-    } catch (err) {
-      console.log(err);
-    }
-  });
-  app.post('/writeparticulareblog',async (req, res) => {
-    const {topic_id,blog,image1,image2,blog_section1,blog_section2} = req.body;
-    try {
-      // const appliedvolunteer=await ApplyforvolunteerSchema.find({email:email});
-      // await appliedvolunteer.updateOne({"email":email},{$set:{"accept":accept}});
-      let task = await TaskSchema.find({_id:topic_id });
-      console.log(task);
-await TaskSchema.updateOne({_id:topic_id }, { $set: { blog: blog,blog_status:true,image1:image1,image2:image2,blog_section1:blog_section1,blog_section2:blog_section2} });
-task = await TaskSchema.find({_id: topic_id });
-      // await  appliedvolunteer.save();
-      return res.json(task);
-    } catch (err) {
-      console.log(err);
-    }
-  });
-  app.get('/blogs',async (req, res) => {
-    // const {topic,blog} = req.body;
-    try {
-      // const appliedvolunteer=await ApplyforvolunteerSchema.find({email:email});
-      // await appliedvolunteer.updateOne({"email":email},{$set:{"accept":accept}});
-//       let task = await TaskSchema.find({topic:topic });
-// await TaskSchema.updateOne({ topic:topic }, { $set: { blog: blog } });
-// task = await TaskSchema.find({topic: topic });
-      // await  appliedvolunteer.save();
-      return res.json(await TaskSchema.find({blog_status:true}));
-    } catch (err) {
-      console.log(err);
-    }
-  });
 app.delete('/delete/:id',async(req,res)=>{
     try{
         await TaskSchema.findByIdAndDelete(req.params.id);
-        return res.json(await TaskSchema.find({blog_status:false}));
+        return res.json(await TaskSchema.find());
     }
     catch(err){
         console.log(err);
