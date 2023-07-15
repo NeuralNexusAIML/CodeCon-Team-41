@@ -1,0 +1,12 @@
+.Nav{
+    display:flex;
+}
+.list_elements{
+    padding:10px;
+    margin:20px
+}
+.whole_nav{
+    margin:0px;
+    padding:0%;
+    background-color:burlywood;
+}
